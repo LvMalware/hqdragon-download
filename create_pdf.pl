@@ -18,10 +18,12 @@ sub create_pdf
         if (-d "$dir")
         {
             print "Creating PDF for $dir...\n";
+            my $title   = `basename "$root_dir"`;
+            my $chapter = `basename "$dir"`;
             my $pdf = PDF::Create->new(
                 'filename'      => "$dir.pdf",
                 'Author'        => `whoami`,
-                'Title'         => "$root_dir - $dir",
+                'Title'         => "$title - $chapter",
                 'CreationDate'  => [ localtime ]
             );
             my $size = $pdf->get_page_size('A4');
