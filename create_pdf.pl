@@ -20,7 +20,7 @@ sub create_pdf
             print "Creating PDF for $dir...\n";
             my $title   = `basename "$root_dir"`;
             my $chapter = `basename "$dir"`;
-            my $pdf = PDF::Create->new(
+            my $pdf     = PDF::Create->new(
                 'filename'      => "$dir.pdf",
                 'Author'        => `whoami`,
                 'Title'         => "$title - $chapter",
