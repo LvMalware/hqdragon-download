@@ -84,7 +84,7 @@ sub main
         my $new   = request("$url\/$index");
         system("mkdir -p '$title\/$index'");
         print "[+] Downloading chapter $index ...\n";
-        while ($new =~ /<img src="(https\:\/\/.*(\d+\.jpg))" class\="img\-/ig)
+        while ($new =~ /<img src="(https\:\/\/.*\/(.+\.jpg))" class\="img\-/ig)
         {
             
             my $file_url  = $1;
