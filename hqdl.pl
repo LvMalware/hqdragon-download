@@ -165,8 +165,8 @@ sub get_chapters
 sub help
 {
     print <<HELP;
-hqdragon-dl - Download de HQs através do site hqdragon.com
-Uso: hqdragon-dl.pl [opções] <hq_url>
+${\basename($0)} - Download de HQs através do site hqdragon.com
+Uso: ${\basename($0)} [opções] <hq_url>
 Opções:
 
     -h, --help      Exibe esta mensagem de ajuda e sai
@@ -179,7 +179,7 @@ Opções:
 
 Exemplo:
 
-    hqdragon-dl.pl --pdf -r https://hqdragon.com/leitor/Supergirl_(1996)/01
+    ${\basename($0)} --pdf -r https://hqdragon.com/leitor/Supergirl_(1996)/01
 
 Esta é uma ferramenta destinada a realizar downloads de HQs
 através do site HQDragon <https://hqdragon.com/>.
@@ -217,8 +217,8 @@ sub main
     
     unless ($url)
     {
-        print "Uso: $0 [opções] <hq_url>\n";
-        print "Tente $0 --help para ver as opções\n";
+        print "Uso: ${\basename($0)} [opções] <hq_url>\n";
+        print "Execute '${\basename($0)}' --help para ver as opções\n";
         exit(0);
     }
     
