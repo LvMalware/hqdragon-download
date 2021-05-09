@@ -7,8 +7,8 @@ do site HQDragon <https://hqdragon.com/>.
 OBS: O desenvolvedor desta ferramenta não possui nenhuma relação com o site e/ou
 com seus criadores/administradores.
 
-    Exemplo: 'hqdragon-dl.pl <hq_url>'
-             'hqdragon-dl.pl --proxy socks5://127.0.0.1:9050 <hq_url>'
+    Exemplo: 'hqdl.pl <hq_url>'
+             'hqdl.pl --pdf <hq_url>'
 
 ![](header.png)
 
