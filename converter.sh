@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 
 # This program is a free software. You are free to use it under the terms of
 # GNU GPL license either version 3 or, at your choice, any later version.
