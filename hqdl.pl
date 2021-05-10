@@ -23,7 +23,7 @@ use vars qw ($VERSION);
 
 $VERSION = "2021.0509.0726";
 
-my ($pdf, $remove, $silent, $queue, $threads, $root, $sti, $ident);
+my ($pdf, $remove, $silent, $queue, $threads, $root, $sti);
 my $errors :shared;
 
 sub request
@@ -36,23 +36,19 @@ sub request
 sub update_status
 {
     my ($msg, $done) = @_;
+    my $align = 40;
     my @status = split //, "\|/-";
     return if $silent;
-    
+    $sti = 0 unless defined($sti);
     if ($done)
     {
         print "\b[DONE]\n";
+        $sti = 0;
     }
     elsif ($msg)
     {
-        $sti = 0;
-        $ident = length($msg) unless $ident && $ident >= length($msg);
-        print "[+] $msg", " " x abs($ident - length($msg)), "\\";
-        $| ++;
-    }
-    else
-    {
-        print "\b$status[$sti]";
+        my $text = "[+] $msg";
+        print "\r", $text, " " x abs($align - length($text)), $status[$sti];
         $| ++;
         $sti = ($sti + 1) % @status;
         sleep(0.5);
@@ -83,11 +79,8 @@ sub build_pdf
         'Title'         => "$title - $chapter",
         'CreationDate'  => [ localtime ]
     );
-    update_status();
     my $size = $pdf->get_page_size('A4');
-    update_status();
     my $page = $pdf->new_page('MediaBox' => $size);
-    update_status();
     for my $img (glob("$path/*.jpg"))
     {
         my $new_page = $page->new_page();
@@ -103,10 +96,10 @@ sub build_pdf
             xalign  => 0,
             yalign  => 2
         );
-        update_status();
+        update_status("Buildig PDF");
     }
     $pdf->close();
-    update_status(0, 1);
+    update_status("Buildig PDF", 1);
     remove_tree($path) if $remove;
 }
 
@@ -129,16 +122,16 @@ sub convert_images
     } for 1 .. $threads;
     while (threads->list(threads::running) > 0)
     {
-        update_status();
+        update_status("Converting images");
     }
     map { $_->join() } threads->list(threads::all);
-    update_status(0, 1);
+    update_status("Converting images", 1);
 }
 
 sub download_chapter
 {
     my ($base, $chapter, $title) = @_;
-    update_status("Downloading chapter $chapter     ");
+    update_status("Downloading chapter $chapter");
     my $html = request("$base/$chapter");
     my $path = "$root/$title/$chapter";
     $path = (make_path($path))[-1] unless -d $path;
@@ -148,10 +141,10 @@ sub download_chapter
     async { thread_download($path) } for 1 .. $threads;
     while (threads->list(threads::running) > 0)
     {
-        update_status();
+        update_status("Downloading chapter $chapter");
     }
     map { $_->join() } threads->list(threads::all);
-    update_status(0,1);
+    update_status("Downloading chapter $chapter", 1);
     $path
 }
 
@@ -218,7 +211,7 @@ sub main
     unless ($url)
     {
         print "Uso: ${\basename($0)} [opções] <hq_url>\n";
-        print "Execute '${\basename($0)}' --help para ver as opções\n";
+        print "Execute '${\basename($0)} --help' para ver as opções\n";
         exit(0);
     }
     
@@ -227,14 +220,14 @@ sub main
         my ($mode, $title, $chapter) = ($1, $2, $3);
         if ($mode eq 'hq')
         {
-            update_status("Getting info                            ");
+            update_status("Getting info");
             my $html = request($url);
             next unless $html =~ /(https\:\/\/hqdragon\.com\/(leitor)\/([^\/]+)\/([^\/]+))/i;
             ($url, $mode, $title, $chapter) = ($1, $2, $3, $4);
             update_status(0, 1);
         }
         my $base = substr($url, 0, rindex($url, "/"));
-        update_status("Getting chapters                        ");
+        update_status("Getting chapters");
         my @chapters = get_chapters($url);
         update_status(0, 1);
         for my $chap (@chapters)
