@@ -8,14 +8,10 @@ use strict;
 use threads;
 use warnings;
 use HTTP::Tiny;
-use File::Copy;
-use File::Temp;
 use PDF::Create;
 use File::Fetch;
 use Getopt::Long;
 use Thread::Queue;
-use Image::Magick;
-use File::Basename;
 use threads::shared;
 use File::Path qw(make_path remove_tree);
 
@@ -112,12 +108,7 @@ sub convert_images
     async {
         while (defined(my $file = $queue->dequeue()))
         {
-            my $img = Image::Magick->new();
-            $img->Read($file);
-            $img->Set(compression => 0);
-            my $tmpname = tmpnam() . "." . basename($file);
-            $img->Write($tmpname);
-            move($tmpname, $file);
+            system("convert '$file' -compress none '$file'");
         }
     } for 1 .. $threads;
     while (threads->list(threads::running) > 0)
